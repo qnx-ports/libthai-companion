@@ -1,0 +1,42 @@
+pkgname=libthai
+pkgver=0.1.29
+pkgrel=1
+pkgdesc="Thai language library"
+url="https://github.com/tlwg/libthai"
+arch="all"
+license="LGPL-2.1-or-later"
+depends_dev="libdatrie-dev"
+depends="libdatrie libdatrie-libs libiconv"
+makedepends="$depends_dev libiconv-dev pkgconf pkgconf-dev"
+subpackages="$pkgname-dev" # doc not available due to the lack of doxygen
+source="https://github.com/tlwg/libthai/releases/download/v$pkgver/libthai-$pkgver.tar.xz"
+
+prepare() {
+    default_prepare
+    update_config_sub
+}
+
+build() {
+    ./configure \
+        --build=$CBUILD \
+        --host=$CHOST \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+        --mandir=/usr/share/man \
+        --localstatedir=/var \
+        LDFLAGS=-Wl,-liconv
+    make
+}
+
+check() {
+    make check
+}
+
+package() {
+    make DESTDIR="$pkgdir" install
+}
+
+
+sha512sums="
+0ba1261581a1705a2a2546a3071acb3c63892dbf111f0dad415667165a6b9542a5e4549061c67b11ec53de7c9e70fceb3c04d794fd12a22d991a539dbacebda1  libthai-0.1.29.tar.xz
+"
